@@ -1,0 +1,253 @@
+# My Personal Coding Preferences
+# These rules represent how I like code to be structured
+
+[[rules]]
+name = "rust_syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
+language = "rust"
+
+[[rules]]
+name = "large_match_prefer_functions"
+query = '''
+(match_expression
+  body: (match_block
+    (match_arm
+      value: (block) @body
+      (#match? @body "(?s)(\\b(let|if|else|match|while|for|loop|return|break|continue)\\b|;[^}]*;)")
+    ) @arm
+  )
+) @match
+'''
+severity = "info"
+message = "Match arm contains inline logic"
+suggestion = "I prefer match statements to be split into separate functions. Each match arm should call a dedicated function rather than containing inline logic. This makes code more testable and easier to navigate."
+enabled = true
+weight = 1.5
+language = "rust"
+
+[[rules]]
+name = "prefer_smaller_functions"
+query = """
+(function_item
+  body: (block
+    (_)
+    (_)
+    (_)
+    (_)
+    (_)
+    (_)
+    (_)
+    (_)
+    (_)
+    (_)
+    (_)?
+    (_)?
+  ) @body
+  (#match? @body "(?s)\\b(let|if|match|for|while|loop|return|break|continue)\\b")
+) @function
+"""
+severity = "warning"
+message = "Function exceeds 25 lines"
+suggestion = "I prefer functions to be focused and small (25 lines max). If a function is doing multiple things, split it up so each has a single, clear purpose."
+enabled = true
+weight = 1.8
+max_function_lines = 25
+language = "rust"
+
+[[rules]]
+name = "avoid_deep_nesting"
+query = "(if_expression consequence: (block (if_expression consequence: (block (if_expression) @deep_if))))"
+severity = "warning"
+message = "Deep nesting detected"
+suggestion = "I prefer flat code with guard clauses and early returns over deep nesting. This makes the happy path easier to follow."
+enabled = true
+weight = 1.6
+language = "rust"
+
+[[rules]]
+name = "no_unwrap_prefer_error_handling"
+query = '(call_expression function: (field_expression field: (field_identifier) @method) (#eq? @method "unwrap")) @call'
+severity = "warning"
+message = "Use of .unwrap()"
+suggestion = "I prefer proper error handling over .unwrap(). Use .expect() with a descriptive message, or better yet, use ? operator and let errors propagate."
+enabled = true
+weight = 1.5
+language = "rust"
+
+[[rules]]
+name = "prefer_descriptive_names"
+query = "(parameters (parameter) @p1 (parameter) @p2 (parameter) @p3 (parameter) @p4 (parameter) @p5) @params"
+severity = "style"
+message = "Many function parameters"
+suggestion = "I prefer functions with few parameters. If you need many parameters, group related ones into a struct with descriptive field names."
+enabled = true
+weight = 1.3
+language = "rust"
+
+[[rules]]
+name = "todos_should_be_issues"
+query = '(line_comment) @comment (#match? @comment "TODO|FIXME")'
+severity = "info"
+message = "TODO comment found"
+suggestion = "I prefer tracking TODOs as issues rather than comments. If it's important enough to note, create a proper issue."
+enabled = true
+weight = 0.3
+language = "rust"
+
+[[rules]]
+name = "js_syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
+language = "javascript"
+
+[[rules]]
+name = "console_log_usage"
+query = "(call_expression function: (member_expression object: (identifier) @obj property: (property_identifier) @prop) (#eq? @obj \"console\") (#eq? @prop \"log\")) @call"
+severity = "info"
+message = "console.log statement found"
+suggestion = "Remove debug logging before committing."
+enabled = true
+weight = 0.5
+language = "javascript"
+
+[[rules]]
+name = "var_keyword_usage"
+query = "(variable_declaration kind: \"var\") @decl"
+severity = "warning"
+message = "Use of 'var' keyword"
+suggestion = "Prefer 'let' or 'const' for clearer scoping."
+enabled = true
+weight = 1.3
+language = "javascript"
+
+[[rules]]
+name = "go_syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
+language = "go"
+
+[[rules]]
+name = "go_missing_error_check"
+query = "(assignment_statement left: (expression_list (identifier) @var (identifier) @err) (#eq? @err \"err\")) @assignment"
+severity = "warning"
+message = "Potential unchecked error"
+suggestion = "Follow this assignment with `if err != nil` handling."
+enabled = true
+weight = 1.8
+language = "go"
+
+[[rules]]
+name = "go_unused_variable"
+query = "(short_var_declaration left: (expression_list (identifier) @var) (#not-match? @var \"^_\"))"
+severity = "info"
+message = "Potentially unused variable"
+suggestion = "Use _ if the variable is intentionally unused."
+enabled = true
+weight = 0.7
+language = "go"
+
+[[rules]]
+name = "go_panic_usage"
+query = "(call_expression function: (identifier) @func (#eq? @func \"panic\")) @call"
+severity = "warning"
+message = "Use of panic()"
+suggestion = "Prefer returning an error instead of panicking."
+enabled = true
+weight = 1.6
+language = "go"
+
+[[rules]]
+name = "go_large_function"
+query = """
+(function_declaration) @function
+(#match? @function "(?:[^\\n]*\\n){40,}")
+"""
+severity = "style"
+message = "Function may be too large"
+suggestion = "Consider splitting long functions into focused helpers."
+enabled = true
+weight = 1.1
+language = "go"
+
+[[rules]]
+name = "go_too_many_parameters"
+query = "(function_declaration parameters: (parameter_list (parameter_declaration) @p1 (parameter_declaration) @p2 (parameter_declaration) @p3 (parameter_declaration) @p4 (parameter_declaration) @p5 (parameter_declaration) @p6)) @function"
+severity = "style"
+message = "Function has many parameters"
+suggestion = "Group related values into a struct or reduce parameter count."
+enabled = true
+weight = 1.3
+language = "go"
+
+[[rules]]
+name = "go_global_variable"
+query = "(source_file (var_declaration) @global_var)"
+severity = "info"
+message = "Global variable declaration"
+suggestion = "Verify this global is necessary before keeping it."
+enabled = true
+weight = 0.8
+language = "go"
+
+[[rules]]
+name = "go_missing_package_doc"
+query = "(source_file (package_clause) @package (#not-has-prev-sibling? @package comment))"
+severity = "info"
+message = "Package missing documentation"
+suggestion = "Add a package comment describing its purpose."
+enabled = true
+weight = 0.6
+language = "go"
+
+[[rules]]
+name = "go_todo_comment"
+query = "(comment) @comment (#match? @comment \"TODO|FIXME|XXX|HACK\")"
+severity = "info"
+message = "TODO comment found"
+suggestion = "Create an issue or address the TODO."
+enabled = true
+weight = 0.3
+language = "go"
+
+[[rules]]
+name = "go_empty_if_block"
+query = "(if_statement consequence: (block) @block (#eq? @block \"{}\"))"
+severity = "style"
+message = "Empty if block"
+suggestion = "Remove or implement the empty block."
+enabled = true
+weight = 1.0
+language = "go"
+
+[[rules]]
+name = "go_magic_number"
+query = "(int_literal) @number (#not-eq? @number \"0\") (#not-eq? @number \"1\") (#not-eq? @number \"2\")"
+severity = "style"
+message = "Magic number found"
+suggestion = "Use a named constant for clarity."
+enabled = true
+weight = 0.4
+language = "go"
+
+[[rules]]
+name = "go_deep_nesting"
+query = "(if_statement consequence: (block (if_statement consequence: (block (if_statement consequence: (block (if_statement) @deep_if))))))"
+severity = "style"
+message = "Deep nesting detected (4+ levels)"
+suggestion = "Extract nested logic into helper functions."
+enabled = true
+weight = 1.4
+language = "go"
