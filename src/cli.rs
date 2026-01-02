@@ -28,7 +28,7 @@ pub fn run() {
 
     let language = SupportedLanguage::from_path(&source_path).unwrap_or_else(|| {
         eprintln!(
-            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx",
+            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx, .zig",
             source_path
         );
         process::exit(1);
@@ -94,7 +94,7 @@ fn usage(program: &str) -> ! {
     eprintln!("Usage: {} <source-file> [config-file]", program);
     eprintln!("Example: {} src/main.rs", program);
     eprintln!("         {} src/main.rs my-preferences.toml", program);
-    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx");
+    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx, .zig");
     process::exit(1);
 }
 
@@ -103,6 +103,7 @@ enum SupportedLanguage {
     Rust,
     Go,
     JavaScript,
+    Zig,
 }
 
 impl SupportedLanguage {
@@ -116,6 +117,7 @@ impl SupportedLanguage {
             "rs" => Some(SupportedLanguage::Rust),
             "go" => Some(SupportedLanguage::Go),
             "js" | "jsx" => Some(SupportedLanguage::JavaScript),
+            "zig" => Some(SupportedLanguage::Zig),
             _ => None,
         }
     }
@@ -125,6 +127,7 @@ impl SupportedLanguage {
             SupportedLanguage::Rust => tree_sitter_rust::LANGUAGE.into(),
             SupportedLanguage::Go => tree_sitter_go::LANGUAGE.into(),
             SupportedLanguage::JavaScript => tree_sitter_javascript::LANGUAGE.into(),
+            SupportedLanguage::Zig => tree_sitter_zig::LANGUAGE.into(),
         }
     }
 
@@ -133,6 +136,7 @@ impl SupportedLanguage {
             SupportedLanguage::Rust => "rust",
             SupportedLanguage::Go => "go",
             SupportedLanguage::JavaScript => "javascript",
+            SupportedLanguage::Zig => "zig",
         }
     }
 
@@ -141,6 +145,7 @@ impl SupportedLanguage {
             SupportedLanguage::Rust => "Rust",
             SupportedLanguage::Go => "Go",
             SupportedLanguage::JavaScript => "JavaScript",
+            SupportedLanguage::Zig => "Zig",
         }
     }
 }

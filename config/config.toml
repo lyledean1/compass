@@ -251,3 +251,50 @@ suggestion = "Extract nested logic into helper functions."
 enabled = true
 weight = 1.4
 language = "go"
+
+[[rules]]
+name = "zig_no_std_debug_warn"
+query = """
+(call_expression
+  function: (field_expression
+    object: (field_expression
+      object: (identifier) @std (#eq? @std "std")
+      member: (identifier) @debug (#eq? @debug "debug")
+    )
+    member: (identifier) @method (#eq? @method "warn")
+  )
+) @call
+"""
+severity = "warning"
+message = "Avoid std.debug.warn"
+suggestion = "Prefer std.debug.print for diagnostics as used throughout Compass."
+enabled = true
+weight = 1.2
+language = "zig"
+
+[[rules]]
+name = "zig_no_panic_builtin"
+query = """
+(builtin_function
+  (builtin_identifier) @func (#eq? @func "@panic")
+) @call
+"""
+severity = "warning"
+message = "Avoid calling @panic directly"
+suggestion = "Use proper error returns and try/catch rather than @panic."
+enabled = true
+weight = 1.5
+language = "zig"
+
+[[rules]]
+name = "zig_no_catch_unreachable"
+query = """
+(catch_expression) @catch
+(#match? @catch "catch\\s+unreachable")
+"""
+severity = "warning"
+message = "Avoid catch unreachable"
+suggestion = "Handle errors explicitly instead of discarding them."
+enabled = true
+weight = 1.4
+language = "zig"

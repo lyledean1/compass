@@ -26,7 +26,7 @@ touch my-style.toml
 compass path/to/file.rs my-style.toml
 ```
 
-`compass` auto-detects `.rs`, `.go`, `.js`, and `.jsx` files. If the config you provide doesn’t have rules for that language, the tool tells you immediately so you can adjust.
+`compass` auto-detects `.rs`, `.go`, `.js`, `.jsx`, and `.zig` files. If the config you provide doesn’t have rules for that language, the tool tells you immediately so you can adjust.
 
 ## Configuration Model
 
