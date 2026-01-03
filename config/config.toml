@@ -298,3 +298,230 @@ suggestion = "Handle errors explicitly instead of discarding them."
 enabled = true
 weight = 1.4
 language = "zig"
+
+# Java Rules
+
+[[rules]]
+name = "java_syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
+language = "java"
+
+[[rules]]
+name = "java_system_out_println"
+query = """
+(method_invocation
+  object: (field_access
+    object: (identifier) @sys (#eq? @sys "System")
+    field: (identifier) @out (#eq? @out "out")
+  )
+  name: (identifier) @method (#eq? @method "println")
+) @call
+"""
+severity = "info"
+message = "System.out.println found"
+suggestion = "I prefer using a proper logging framework (SLF4J, Logback, Log4j) instead of System.out for production code."
+enabled = true
+weight = 0.7
+language = "java"
+
+[[rules]]
+name = "java_empty_catch_block"
+query = """
+(catch_clause
+  body: (block) @body
+  (#eq? @body "{}")
+) @catch
+"""
+severity = "warning"
+message = "Empty catch block"
+suggestion = "I prefer explicit error handling. Either log the exception, rethrow it, or at minimum add a comment explaining why it's safe to ignore."
+enabled = true
+weight = 1.8
+language = "java"
+
+[[rules]]
+name = "java_catch_generic_exception"
+query = """
+(catch_clause) @catch
+(#match? @catch "Exception")
+"""
+severity = "warning"
+message = "Catching generic Exception"
+suggestion = "I prefer catching specific exception types. Catching 'Exception' is too broad and can hide unexpected errors."
+enabled = false
+weight = 1.4
+language = "java"
+
+[[rules]]
+name = "java_public_field"
+query = """
+(field_declaration
+  (modifiers) @mods
+  (#match? @mods "public")
+  type: (_)
+  declarator: (variable_declarator
+    name: (identifier) @field
+  )
+) @decl
+"""
+severity = "warning"
+message = "Public field detected"
+suggestion = "I prefer private fields with public getter/setter methods. This maintains encapsulation and allows validation."
+enabled = true
+weight = 1.3
+language = "java"
+
+[[rules]]
+name = "java_long_method"
+query = """
+(method_declaration
+  body: (block) @body
+) @method
+"""
+severity = "info"
+message = "Method may be too long"
+suggestion = "I prefer methods to be focused and concise (ideally under 30 lines). Extract complex logic into helper methods."
+enabled = true
+weight = 1.2
+language = "java"
+
+[[rules]]
+name = "java_too_many_parameters"
+query = """
+(formal_parameters
+  (formal_parameter) @p1
+  (formal_parameter) @p2
+  (formal_parameter) @p3
+  (formal_parameter) @p4
+  (formal_parameter) @p5
+  (formal_parameter) @p6
+) @params
+"""
+severity = "warning"
+message = "Method has 6+ parameters"
+suggestion = "I prefer methods with fewer parameters (ideally ≤4). Consider using a parameter object or builder pattern."
+enabled = true
+weight = 1.4
+language = "java"
+
+[[rules]]
+name = "java_magic_numbers"
+query = """
+(decimal_integer_literal) @num
+(#not-match? @num "^[0-2]$")
+"""
+severity = "info"
+message = "Magic number found"
+suggestion = "I prefer named constants over magic numbers. Use static final constants to make the code self-documenting."
+enabled = true
+weight = 0.5
+language = "java"
+
+[[rules]]
+name = "java_null_return"
+query = """
+(return_statement
+  (null_literal) @null
+) @return
+"""
+severity = "info"
+message = "Returning null"
+suggestion = "I prefer returning Optional<T> instead of null to make nullability explicit and avoid NullPointerException."
+enabled = true
+weight = 1.0
+language = "java"
+
+[[rules]]
+name = "java_instanceof_pattern"
+query = "(instanceof_expression) @check"
+severity = "info"
+message = "instanceof check found"
+suggestion = "I prefer polymorphism or the visitor pattern over instanceof checks when possible. If using instanceof, consider Java 16+ pattern matching."
+enabled = false
+weight = 0.6
+language = "java"
+
+[[rules]]
+name = "java_string_concatenation_in_loop"
+query = """
+(for_statement
+  body: (block
+    (expression_statement
+      (assignment_expression
+        left: (_)
+        operator: "+="
+        right: (binary_expression
+          operator: "+"
+        )
+      )
+    )
+  )
+) @loop
+"""
+severity = "warning"
+message = "String concatenation in loop"
+suggestion = "I prefer using StringBuilder for string concatenation in loops to avoid creating many temporary String objects."
+enabled = true
+weight = 1.5
+language = "java"
+
+[[rules]]
+name = "java_deep_nesting"
+query = """
+(if_statement
+  consequence: (block
+    (if_statement
+      consequence: (block
+        (if_statement
+          consequence: (block
+            (if_statement) @deep
+          )
+        )
+      )
+    )
+  )
+) @nested
+"""
+severity = "warning"
+message = "Deep nesting detected (4+ levels)"
+suggestion = "I prefer guard clauses and early returns over deep nesting. Extract nested logic into separate methods."
+enabled = true
+weight = 1.6
+language = "java"
+
+[[rules]]
+name = "java_missing_override_annotation"
+query = """
+(method_declaration
+  name: (identifier) @name
+  (#match? @name "^(equals|hashCode|toString)$")
+  (#not-has-parent? @name annotation)
+) @method
+"""
+severity = "info"
+message = "Missing @Override annotation"
+suggestion = "I prefer using @Override on methods that override Object methods (equals, hashCode, toString) for clarity and compile-time checking."
+enabled = true
+weight = 0.8
+language = "java"
+
+[[rules]]
+name = "java_boolean_literal_comparison"
+query = """
+(binary_expression
+  left: (_)
+  operator: "=="
+  right: (true) @bool
+) @comparison
+"""
+severity = "info"
+message = "Comparing to boolean literal"
+suggestion = "I prefer direct boolean expressions. Instead of 'x == true', just use 'x'. Instead of 'x == false', use '!x'."
+enabled = true
+weight = 0.4
+language = "java"

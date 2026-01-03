@@ -28,7 +28,7 @@ pub fn run() {
 
     let language = SupportedLanguage::from_path(&source_path).unwrap_or_else(|| {
         eprintln!(
-            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx, .zig",
+            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx, .zig, .java",
             source_path
         );
         process::exit(1);
@@ -94,7 +94,7 @@ fn usage(program: &str) -> ! {
     eprintln!("Usage: {} <source-file> [config-file]", program);
     eprintln!("Example: {} src/main.rs", program);
     eprintln!("         {} src/main.rs my-preferences.toml", program);
-    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx, .zig");
+    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx, .zig, .java");
     process::exit(1);
 }
 
@@ -104,6 +104,7 @@ enum SupportedLanguage {
     Go,
     JavaScript,
     Zig,
+    Java,
 }
 
 impl SupportedLanguage {
@@ -118,6 +119,7 @@ impl SupportedLanguage {
             "go" => Some(SupportedLanguage::Go),
             "js" | "jsx" => Some(SupportedLanguage::JavaScript),
             "zig" => Some(SupportedLanguage::Zig),
+            "java" => Some(SupportedLanguage::Java),
             _ => None,
         }
     }
@@ -128,6 +130,7 @@ impl SupportedLanguage {
             SupportedLanguage::Go => tree_sitter_go::LANGUAGE.into(),
             SupportedLanguage::JavaScript => tree_sitter_javascript::LANGUAGE.into(),
             SupportedLanguage::Zig => tree_sitter_zig::LANGUAGE.into(),
+            SupportedLanguage::Java => tree_sitter_java::LANGUAGE.into(),
         }
     }
 
@@ -137,6 +140,7 @@ impl SupportedLanguage {
             SupportedLanguage::Go => "go",
             SupportedLanguage::JavaScript => "javascript",
             SupportedLanguage::Zig => "zig",
+            SupportedLanguage::Java => "java",
         }
     }
 
@@ -146,6 +150,7 @@ impl SupportedLanguage {
             SupportedLanguage::Go => "Go",
             SupportedLanguage::JavaScript => "JavaScript",
             SupportedLanguage::Zig => "Zig",
+            SupportedLanguage::Java => "Java",
         }
     }
 }
