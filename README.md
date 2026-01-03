@@ -14,6 +14,34 @@ Large language models are great at producing code, but nudging them toward your 
 
 The default config (`config/config.toml`) includes opinionated rules for Rust, Go, and JavaScript (e.g., no inline logic in `match` arms, warn on unchecked Go errors, catch `console.log`). You can tweak or replace it entirely.
 
+## Installation
+
+### Quick Install (macOS/Linux)
+
+```bash
+# macOS ARM64 (M1/M2/M3)
+curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-macos-arm64.tar.gz | tar xz
+sudo mv compass /usr/local/bin/
+
+# macOS Intel
+curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-macos-amd64.tar.gz | tar xz
+sudo mv compass /usr/local/bin/
+
+# Linux AMD64
+curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-linux-amd64.tar.gz | tar xz
+sudo mv compass /usr/local/bin/
+
+# Linux ARM64
+curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-linux-arm64.tar.gz | tar xz
+sudo mv compass /usr/local/bin/
+```
+
+### Build from Source
+
+```bash
+cargo install --git https://github.com/lyledean1/compass
+```
+
 ## Usage
 
 ```bash
@@ -26,7 +54,9 @@ touch my-style.toml
 compass path/to/file.rs my-style.toml
 ```
 
-`compass` auto-detects `.rs`, `.go`, `.js`, `.jsx`, and `.zig` files. If the config you provide doesn’t have rules for that language, the tool tells you immediately so you can adjust.
+**Supported languages:** Rust, Go, JavaScript, Java, C++, Swift, Zig
+
+`compass` auto-detects file extensions: `.rs`, `.go`, `.js`, `.jsx`, `.java`, `.cpp`, `.cc`, `.cxx`, `.h`, `.hpp`, `.swift`, `.zig`
 
 ## Configuration Model
 
