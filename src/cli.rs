@@ -7,7 +7,11 @@ use crate::config::AnalyzerConfig;
 use serde_json::to_string_pretty;
 use tree_sitter::Language;
 
-const DEFAULT_CONFIG: &str = include_str!("../config/config.toml");
+const RUST_CONFIG: &str = include_str!("../config/languages/rust.toml");
+const GO_CONFIG: &str = include_str!("../config/languages/go.toml");
+const JAVASCRIPT_CONFIG: &str = include_str!("../config/languages/javascript.toml");
+const JAVA_CONFIG: &str = include_str!("../config/languages/java.toml");
+const ZIG_CONFIG: &str = include_str!("../config/languages/zig.toml");
 
 pub fn run() {
     let mut args = env::args();
@@ -44,12 +48,13 @@ pub fn run() {
             })
         }
         None => {
-            config_label = "built-in defaults".to_string();
-            AnalyzerConfig::from_str(DEFAULT_CONFIG).expect("embedded config should parse")
+            config_label = format!("built-in {}", language.config_key());
+            let default_config = language.default_config();
+            AnalyzerConfig::from_str(default_config).expect("embedded config should parse")
         }
     };
 
-    let analyzer = config.to_analyzer_for_language(language.config_key());
+    let analyzer = config.to_analyzer();
     if !analyzer.has_rules() {
         eprintln!(
             "Error: config '{}' contains no enabled rules for language '{}'",
@@ -151,6 +156,16 @@ impl SupportedLanguage {
             SupportedLanguage::JavaScript => "JavaScript",
             SupportedLanguage::Zig => "Zig",
             SupportedLanguage::Java => "Java",
+        }
+    }
+
+    fn default_config(&self) -> &'static str {
+        match self {
+            SupportedLanguage::Rust => RUST_CONFIG,
+            SupportedLanguage::Go => GO_CONFIG,
+            SupportedLanguage::JavaScript => JAVASCRIPT_CONFIG,
+            SupportedLanguage::Zig => ZIG_CONFIG,
+            SupportedLanguage::Java => JAVA_CONFIG,
         }
     }
 }

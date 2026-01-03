@@ -14,8 +14,6 @@ pub struct RuleConfig {
     pub weight: f64,
     #[serde(default)]
     pub enabled: bool,
-    #[serde(default)]
-    pub language: Option<String>,
 }
 
 fn default_weight() -> f64 {
@@ -40,19 +38,17 @@ impl AnalyzerConfig {
         Ok(config)
     }
 
-    pub fn to_analyzer_for_language(&self, language: &str) -> CodeAnalyzer {
+    pub fn from_language(language: &str) -> Result<Self, Box<dyn std::error::Error>> {
+        let config_name = format!("config/languages/{}.toml", language);
+        Self::from_file(&config_name)
+    }
+
+    pub fn to_analyzer(&self) -> CodeAnalyzer {
         let mut analyzer = CodeAnalyzer::new();
-        let target_language = language.to_lowercase();
 
         for rule_config in &self.rules {
             if !rule_config.enabled {
                 continue;
-            }
-
-            if let Some(rule_language) = &rule_config.language {
-                if rule_language.to_lowercase() != target_language {
-                    continue;
-                }
             }
 
             let severity = match rule_config.severity.to_lowercase().as_str() {
@@ -105,6 +101,5 @@ weight = 2.0
         assert_eq!(config.rules.len(), 1);
         assert_eq!(config.rules[0].name, "test_rule");
         assert_eq!(config.rules[0].weight, 2.0);
-        assert!(config.rules[0].language.is_none());
     }
 }

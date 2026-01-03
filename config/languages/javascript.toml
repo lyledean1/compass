@@ -1,0 +1,28 @@
+# JavaScript Coding Preferences
+
+[[rules]]
+name = "syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
+
+[[rules]]
+name = "console_log_usage"
+query = "(call_expression function: (member_expression object: (identifier) @obj property: (property_identifier) @prop) (#eq? @obj \"console\") (#eq? @prop \"log\")) @call"
+severity = "info"
+message = "console.log statement found"
+suggestion = "Remove debug logging before committing."
+enabled = true
+weight = 0.5
+
+[[rules]]
+name = "var_keyword_usage"
+query = "(variable_declaration kind: \"var\") @decl"
+severity = "warning"
+message = "Use of 'var' keyword"
+suggestion = "Prefer 'let' or 'const' for clearer scoping."
+enabled = true
+weight = 1.3

@@ -1,0 +1,10 @@
+# Zig Coding Preferences
+
+[[rules]]
+name = "syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
