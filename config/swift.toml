@@ -1,0 +1,98 @@
+# Swift Coding Preferences
+
+[[rules]]
+name = "syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
+
+[[rules]]
+name = "force_unwrap"
+query = "(navigation_suffix) @unwrap (#match? @unwrap \"!\")"
+severity = "warning"
+message = "Force unwrap (!) detected"
+suggestion = "I prefer safe unwrapping with if-let, guard-let, or optional chaining over force unwrapping. Force unwraps can crash at runtime."
+enabled = true
+weight = 1.8
+
+[[rules]]
+name = "print_statement"
+query = """
+(call_expression
+  (simple_identifier) @func (#eq? @func "print")
+) @call
+"""
+severity = "info"
+message = "print() statement found"
+suggestion = "I prefer using a proper logging framework (os.log, SwiftLog) over print() statements for better control and production debugging."
+enabled = true
+weight = 0.7
+
+[[rules]]
+name = "dispatch_queue_main_async"
+query = """
+(navigation_expression
+  (navigation_expression
+    (simple_identifier) @dispatch (#eq? @dispatch "DispatchQueue")
+    (navigation_suffix
+      (simple_identifier) @main (#eq? @main "main")
+    )
+  )
+  (navigation_suffix
+    (simple_identifier) @async (#eq? @async "async")
+  )
+) @usage
+"""
+severity = "info"
+message = "DispatchQueue.main.async usage"
+suggestion = "I prefer using @MainActor over DispatchQueue.main.async for clearer thread safety guarantees in modern Swift."
+enabled = true
+weight = 0.8
+
+[[rules]]
+name = "fatal_error"
+query = """
+(call_expression
+  (simple_identifier) @func (#eq? @func "fatalError")
+) @call
+"""
+severity = "warning"
+message = "fatalError() usage"
+suggestion = "I prefer throwing errors or returning nil/Result over fatalError(). Reserve fatalError only for truly unrecoverable programmer errors."
+enabled = true
+weight = 1.6
+
+[[rules]]
+name = "force_cast"
+query = "(as_operator) @cast (#match? @cast \"as!\")"
+severity = "warning"
+message = "Force cast (as!) detected"
+suggestion = "I prefer safe casting with 'as?' or 'guard let x = y as?' over force casting. Force casts can crash at runtime."
+enabled = true
+weight = 1.7
+
+[[rules]]
+name = "magic_numbers"
+query = """
+(integer_literal) @num
+(#not-match? @num "^[01]$")
+"""
+severity = "style"
+message = "Magic number detected"
+suggestion = "I prefer named constants over magic numbers. Use let/static let with descriptive names."
+enabled = true
+weight = 1.2
+
+[[rules]]
+name = "todo_comments"
+query = """
+(comment) @comment (#match? @comment "TODO|FIXME")
+"""
+severity = "info"
+message = "TODO/FIXME comment found"
+suggestion = "I prefer tracking TODOs as issues rather than comments. If it's important enough to note, create a proper issue."
+enabled = true
+weight = 0.3

@@ -13,6 +13,7 @@ const JAVASCRIPT_CONFIG: &str = include_str!("../config/javascript.toml");
 const JAVA_CONFIG: &str = include_str!("../config/java.toml");
 const ZIG_CONFIG: &str = include_str!("../config/zig.toml");
 const CPP_CONFIG: &str = include_str!("../config/cpp.toml");
+const SWIFT_CONFIG: &str = include_str!("../config/swift.toml");
 
 pub fn run() {
     let mut args = env::args();
@@ -33,7 +34,7 @@ pub fn run() {
 
     let language = SupportedLanguage::from_path(&source_path).unwrap_or_else(|| {
         eprintln!(
-            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx, .zig, .java, .cpp, .cc, .cxx, .h, .hpp",
+            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx, .zig, .java, .cpp, .cc, .cxx, .h, .hpp, .swift",
             source_path
         );
         process::exit(1);
@@ -100,7 +101,7 @@ fn usage(program: &str) -> ! {
     eprintln!("Usage: {} <source-file> [config-file]", program);
     eprintln!("Example: {} src/main.rs", program);
     eprintln!("         {} src/main.rs my-preferences.toml", program);
-    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx, .zig, .java, .cpp, .cc, .cxx, .h, .hpp");
+    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx, .zig, .java, .cpp, .cc, .cxx, .h, .hpp, .swift");
     process::exit(1);
 }
 
@@ -112,6 +113,7 @@ enum SupportedLanguage {
     Zig,
     Java,
     Cpp,
+    Swift,
 }
 
 impl SupportedLanguage {
@@ -128,6 +130,7 @@ impl SupportedLanguage {
             "zig" => Some(SupportedLanguage::Zig),
             "java" => Some(SupportedLanguage::Java),
             "cpp" | "cc" | "cxx" | "h" | "hpp" => Some(SupportedLanguage::Cpp),
+            "swift" => Some(SupportedLanguage::Swift),
             _ => None,
         }
     }
@@ -140,6 +143,7 @@ impl SupportedLanguage {
             SupportedLanguage::Zig => tree_sitter_zig::LANGUAGE.into(),
             SupportedLanguage::Java => tree_sitter_java::LANGUAGE.into(),
             SupportedLanguage::Cpp => tree_sitter_cpp::LANGUAGE.into(),
+            SupportedLanguage::Swift => tree_sitter_swift::LANGUAGE.into(),
         }
     }
 
@@ -151,6 +155,7 @@ impl SupportedLanguage {
             SupportedLanguage::Zig => "zig",
             SupportedLanguage::Java => "java",
             SupportedLanguage::Cpp => "cpp",
+            SupportedLanguage::Swift => "swift",
         }
     }
 
@@ -162,6 +167,7 @@ impl SupportedLanguage {
             SupportedLanguage::Zig => "Zig",
             SupportedLanguage::Java => "Java",
             SupportedLanguage::Cpp => "C++",
+            SupportedLanguage::Swift => "Swift",
         }
     }
 
@@ -173,6 +179,7 @@ impl SupportedLanguage {
             SupportedLanguage::Zig => ZIG_CONFIG,
             SupportedLanguage::Java => JAVA_CONFIG,
             SupportedLanguage::Cpp => CPP_CONFIG,
+            SupportedLanguage::Swift => SWIFT_CONFIG,
         }
     }
 }

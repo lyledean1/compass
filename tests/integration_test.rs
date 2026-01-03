@@ -6,6 +6,7 @@ const JAVA_CONFIG: &str = include_str!("../config/java.toml");
 const GO_CONFIG: &str = include_str!("../config/go.toml");
 const JAVASCRIPT_CONFIG: &str = include_str!("../config/javascript.toml");
 const CPP_CONFIG: &str = include_str!("../config/cpp.toml");
+const SWIFT_CONFIG: &str = include_str!("../config/swift.toml");
 
 #[test]
 fn test_rust_analyzer_end_to_end() {
@@ -160,6 +161,45 @@ fn test_cpp_analyzer_end_to_end() {
 }
 
 #[test]
+fn test_swift_analyzer_end_to_end() {
+    let config = AnalyzerConfig::from_str(SWIFT_CONFIG).expect("Failed to parse Swift config");
+    let analyzer = config.to_analyzer();
+
+    assert!(analyzer.has_rules(), "Swift analyzer should have rules");
+
+    let source = fs::read_to_string("tests/fixtures/test.swift").expect("Failed to read test.swift");
+    let language = tree_sitter_swift::LANGUAGE.into();
+
+    let (results, score) = analyzer
+        .analyze_with_score(&source, &language)
+        .expect("Analysis failed");
+
+    // Should detect force unwrap
+    let has_unwrap_issue = results.iter().any(|r| r.rule_name.contains("force_unwrap"));
+    assert!(has_unwrap_issue, "Should detect force unwrap (!)");
+
+    // Should detect print statements
+    let has_print_issue = results.iter().any(|r| r.rule_name.contains("print"));
+    assert!(has_print_issue, "Should detect print() statements");
+
+    // Should detect DispatchQueue.main.async
+    let has_dispatch_issue = results.iter().any(|r| r.rule_name.contains("dispatch_queue"));
+    assert!(has_dispatch_issue, "Should detect DispatchQueue.main.async");
+
+    // Should detect fatalError
+    let has_fatal_error = results.iter().any(|r| r.rule_name.contains("fatal_error"));
+    assert!(has_fatal_error, "Should detect fatalError()");
+
+    // Should detect force cast
+    let has_force_cast = results.iter().any(|r| r.rule_name.contains("force_cast"));
+    assert!(has_force_cast, "Should detect force cast (as!)");
+
+    assert!(score.overall_score < 10.0, "Code with issues should have score < 10");
+
+    println!("Swift test: Found {} issues, score: {}/10", results.len(), score.overall_score);
+}
+
+#[test]
 fn test_all_configs_parse() {
     // Ensure all embedded configs are valid TOML
     AnalyzerConfig::from_str(RUST_CONFIG).expect("Rust config should parse");
@@ -167,6 +207,7 @@ fn test_all_configs_parse() {
     AnalyzerConfig::from_str(GO_CONFIG).expect("Go config should parse");
     AnalyzerConfig::from_str(JAVASCRIPT_CONFIG).expect("JavaScript config should parse");
     AnalyzerConfig::from_str(CPP_CONFIG).expect("C++ config should parse");
+    AnalyzerConfig::from_str(SWIFT_CONFIG).expect("Swift config should parse");
 }
 
 #[test]
@@ -186,4 +227,7 @@ fn test_all_analyzers_have_rules() {
 
     let cpp_analyzer = AnalyzerConfig::from_str(CPP_CONFIG).unwrap().to_analyzer();
     assert!(cpp_analyzer.has_rules(), "C++ analyzer must have rules");
+
+    let swift_analyzer = AnalyzerConfig::from_str(SWIFT_CONFIG).unwrap().to_analyzer();
+    assert!(swift_analyzer.has_rules(), "Swift analyzer must have rules");
 }
