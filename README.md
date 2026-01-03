@@ -16,7 +16,18 @@ The default config (`config/config.toml`) includes opinionated rules for Rust, G
 
 ## Installation
 
-### Quick Install (macOS/Linux)
+### Quick Install (Recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/lyledean1/compass/main/install.sh | bash
+```
+
+This will automatically detect your platform and install the latest release.
+
+### Manual Install
+
+<details>
+<summary>Platform-specific instructions</summary>
 
 ```bash
 # macOS ARM64 (M1/M2/M3)
@@ -35,6 +46,8 @@ sudo mv compass /usr/local/bin/
 curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-linux-arm64.tar.gz | tar xz
 sudo mv compass /usr/local/bin/
 ```
+
+</details>
 
 ### Build from Source
 
