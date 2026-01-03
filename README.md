@@ -24,31 +24,6 @@ curl -fsSL https://raw.githubusercontent.com/lyledean1/compass/main/install.sh |
 
 This will automatically detect your platform and install the latest release.
 
-### Manual Install
-
-<details>
-<summary>Platform-specific instructions</summary>
-
-```bash
-# macOS ARM64 (M1/M2/M3)
-curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-macos-arm64.tar.gz | tar xz
-sudo mv compass /usr/local/bin/
-
-# macOS Intel
-curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-macos-amd64.tar.gz | tar xz
-sudo mv compass /usr/local/bin/
-
-# Linux AMD64
-curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-linux-amd64.tar.gz | tar xz
-sudo mv compass /usr/local/bin/
-
-# Linux ARM64
-curl -L https://github.com/lyledean1/compass/releases/latest/download/compass-linux-arm64.tar.gz | tar xz
-sudo mv compass /usr/local/bin/
-```
-
-</details>
-
 ### Build from Source
 
 ```bash
