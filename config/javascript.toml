@@ -20,7 +20,7 @@ weight = 0.5
 
 [[rules]]
 name = "var_keyword_usage"
-query = "(variable_declaration kind: \"var\") @decl"
+query = "(variable_declaration) @decl (#match? @decl \"^var\\s\")"
 severity = "warning"
 message = "Use of 'var' keyword"
 suggestion = "Prefer 'let' or 'const' for clearer scoping."

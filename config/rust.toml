@@ -58,7 +58,21 @@ max_function_lines = 25
 
 [[rules]]
 name = "avoid_deep_nesting"
-query = "(if_expression consequence: (block (if_expression consequence: (block (if_expression) @deep_if))))"
+query = """
+(if_expression
+  (block
+    (expression_statement
+      (if_expression
+        (block
+          (expression_statement
+            (if_expression) @deep_if
+          )
+        )
+      )
+    )
+  )
+)
+"""
 severity = "warning"
 message = "Deep nesting detected"
 suggestion = "I prefer flat code with guard clauses and early returns over deep nesting. This makes the happy path easier to follow."

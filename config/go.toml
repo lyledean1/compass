@@ -11,7 +11,7 @@ weight = 2.0
 
 [[rules]]
 name = "missing_error_check"
-query = "(assignment_statement left: (expression_list (identifier) @var (identifier) @err) (#eq? @err \"err\")) @assignment"
+query = "(short_var_declaration left: (expression_list (identifier) @var (identifier) @err) (#eq? @err \"err\")) @assignment"
 severity = "warning"
 message = "Potential unchecked error"
 suggestion = "Follow this assignment with `if err != nil` handling."
