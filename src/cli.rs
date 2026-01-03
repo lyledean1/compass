@@ -12,6 +12,7 @@ const GO_CONFIG: &str = include_str!("../config/go.toml");
 const JAVASCRIPT_CONFIG: &str = include_str!("../config/javascript.toml");
 const JAVA_CONFIG: &str = include_str!("../config/java.toml");
 const ZIG_CONFIG: &str = include_str!("../config/zig.toml");
+const CPP_CONFIG: &str = include_str!("../config/cpp.toml");
 
 pub fn run() {
     let mut args = env::args();
@@ -32,7 +33,7 @@ pub fn run() {
 
     let language = SupportedLanguage::from_path(&source_path).unwrap_or_else(|| {
         eprintln!(
-            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx, .zig, .java",
+            "Error: unsupported file extension for '{}'. Supported extensions: .rs, .go, .js, .jsx, .zig, .java, .cpp, .cc, .cxx, .h, .hpp",
             source_path
         );
         process::exit(1);
@@ -99,7 +100,7 @@ fn usage(program: &str) -> ! {
     eprintln!("Usage: {} <source-file> [config-file]", program);
     eprintln!("Example: {} src/main.rs", program);
     eprintln!("         {} src/main.rs my-preferences.toml", program);
-    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx, .zig, .java");
+    eprintln!("\nSupported extensions: .rs, .go, .js, .jsx, .zig, .java, .cpp, .cc, .cxx, .h, .hpp");
     process::exit(1);
 }
 
@@ -110,6 +111,7 @@ enum SupportedLanguage {
     JavaScript,
     Zig,
     Java,
+    Cpp,
 }
 
 impl SupportedLanguage {
@@ -125,6 +127,7 @@ impl SupportedLanguage {
             "js" | "jsx" => Some(SupportedLanguage::JavaScript),
             "zig" => Some(SupportedLanguage::Zig),
             "java" => Some(SupportedLanguage::Java),
+            "cpp" | "cc" | "cxx" | "h" | "hpp" => Some(SupportedLanguage::Cpp),
             _ => None,
         }
     }
@@ -136,6 +139,7 @@ impl SupportedLanguage {
             SupportedLanguage::JavaScript => tree_sitter_javascript::LANGUAGE.into(),
             SupportedLanguage::Zig => tree_sitter_zig::LANGUAGE.into(),
             SupportedLanguage::Java => tree_sitter_java::LANGUAGE.into(),
+            SupportedLanguage::Cpp => tree_sitter_cpp::LANGUAGE.into(),
         }
     }
 
@@ -146,6 +150,7 @@ impl SupportedLanguage {
             SupportedLanguage::JavaScript => "javascript",
             SupportedLanguage::Zig => "zig",
             SupportedLanguage::Java => "java",
+            SupportedLanguage::Cpp => "cpp",
         }
     }
 
@@ -156,6 +161,7 @@ impl SupportedLanguage {
             SupportedLanguage::JavaScript => "JavaScript",
             SupportedLanguage::Zig => "Zig",
             SupportedLanguage::Java => "Java",
+            SupportedLanguage::Cpp => "C++",
         }
     }
 
@@ -166,6 +172,7 @@ impl SupportedLanguage {
             SupportedLanguage::JavaScript => JAVASCRIPT_CONFIG,
             SupportedLanguage::Zig => ZIG_CONFIG,
             SupportedLanguage::Java => JAVA_CONFIG,
+            SupportedLanguage::Cpp => CPP_CONFIG,
         }
     }
 }

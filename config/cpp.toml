@@ -1,0 +1,89 @@
+# C++ Coding Preferences
+
+[[rules]]
+name = "syntax_error"
+query = "(ERROR) @error"
+severity = "error"
+message = "Syntax error"
+suggestion = "Fix the syntax error before proceeding."
+enabled = true
+weight = 2.0
+
+[[rules]]
+name = "prefer_smart_pointers"
+query = "(new_expression) @new"
+severity = "warning"
+message = "Raw 'new' operator usage"
+suggestion = "I prefer using smart pointers (std::unique_ptr, std::shared_ptr) over raw 'new'. This prevents memory leaks and makes ownership clear."
+enabled = true
+weight = 1.8
+
+[[rules]]
+name = "manual_delete"
+query = """
+(delete_expression) @delete
+"""
+severity = "warning"
+message = "Manual 'delete' operator usage"
+suggestion = "I prefer RAII and smart pointers over manual 'delete'. Let destructors handle cleanup automatically."
+enabled = true
+weight = 1.8
+
+[[rules]]
+name = "cout_cerr_usage"
+query = """
+(qualified_identifier
+  scope: (namespace_identifier) @std (#eq? @std "std")
+  name: (identifier) @stream (#match? @stream "^(cout|cerr)$")
+) @usage
+"""
+severity = "info"
+message = "std::cout or std::cerr usage"
+suggestion = "I prefer using a proper logging framework over std::cout/std::cerr for better control over log levels and output formatting."
+enabled = true
+weight = 0.7
+
+[[rules]]
+name = "c_style_cast"
+query = """
+(cast_expression) @cast
+"""
+severity = "warning"
+message = "C-style cast detected"
+suggestion = "I prefer C++ style casts (static_cast, dynamic_cast, const_cast, reinterpret_cast) over C-style casts. They're safer and more explicit about intent."
+enabled = true
+weight = 1.5
+
+[[rules]]
+name = "throw_statement"
+query = """
+(throw_statement) @throw
+"""
+severity = "info"
+message = "throw statement found"
+suggestion = "I prefer returning std::optional or std::expected over throwing exceptions for expected error conditions. Reserve exceptions for truly exceptional cases."
+enabled = true
+weight = 0.8
+
+[[rules]]
+name = "todo_comments"
+query = """
+(comment) @comment (#match? @comment "TODO|FIXME")
+"""
+severity = "info"
+message = "TODO/FIXME comment found"
+suggestion = "I prefer tracking TODOs as issues rather than comments. If it's important enough to note, create a proper issue."
+enabled = true
+weight = 0.3
+
+[[rules]]
+name = "magic_numbers"
+query = """
+(number_literal) @num
+(#not-match? @num "^[01]$")
+"""
+severity = "style"
+message = "Magic number detected"
+suggestion = "I prefer named constants over magic numbers. Use constexpr or const variables with descriptive names."
+enabled = true
+weight = 1.2
