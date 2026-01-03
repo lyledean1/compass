@@ -39,7 +39,7 @@ impl AnalyzerConfig {
     }
 
     pub fn from_language(language: &str) -> Result<Self, Box<dyn std::error::Error>> {
-        let config_name = format!("config/languages/{}.toml", language);
+        let config_name = format!("config/{}.toml", language);
         Self::from_file(&config_name)
     }
 

@@ -7,11 +7,11 @@ use crate::config::AnalyzerConfig;
 use serde_json::to_string_pretty;
 use tree_sitter::Language;
 
-const RUST_CONFIG: &str = include_str!("../config/languages/rust.toml");
-const GO_CONFIG: &str = include_str!("../config/languages/go.toml");
-const JAVASCRIPT_CONFIG: &str = include_str!("../config/languages/javascript.toml");
-const JAVA_CONFIG: &str = include_str!("../config/languages/java.toml");
-const ZIG_CONFIG: &str = include_str!("../config/languages/zig.toml");
+const RUST_CONFIG: &str = include_str!("../config/rust.toml");
+const GO_CONFIG: &str = include_str!("../config/go.toml");
+const JAVASCRIPT_CONFIG: &str = include_str!("../config/javascript.toml");
+const JAVA_CONFIG: &str = include_str!("../config/java.toml");
+const ZIG_CONFIG: &str = include_str!("../config/zig.toml");
 
 pub fn run() {
     let mut args = env::args();

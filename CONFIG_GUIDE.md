@@ -4,10 +4,10 @@ Treescan uses language-specific configuration files to define coding preferences
 
 ## Default Configurations
 
-Built-in configurations are located in `config/languages/`:
+Built-in configurations are located in `config/`:
 
 ```
-config/languages/
+config/
 ├── rust.toml
 ├── go.toml
 ├── java.toml
@@ -21,9 +21,9 @@ Each file contains rules for that specific language. The language is automatical
 
 ### Use built-in defaults:
 ```bash
-compass src/main.rs                    # Uses config/languages/rust.toml
-compass Example.java                    # Uses config/languages/java.toml
-compass app.js                          # Uses config/languages/javascript.toml
+compass src/main.rs                    # Uses config/rust.toml
+compass Example.java                    # Uses config/java.toml
+compass app.js                          # Uses config/javascript.toml
 ```
 
 ### Override with custom preferences:
